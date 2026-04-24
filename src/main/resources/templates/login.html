@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('Login • VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-5" style="max-width:540px;">
+  <div class="auth-shell p-4 p-md-5">
+    <span class="pill-label mb-3 d-inline-flex">Connexion</span>
+    <h3 class="mb-3 fw-bold">Bienvenue sur VIELO SmartBet</h3>
+
+    <div class="alert alert-success border-0" th:if="${param.registered}">Compte créé. Tu peux te connecter.</div>
+    <div class="alert alert-danger border-0" th:if="${param.error}">Email ou mot de passe incorrect.</div>
+    <div class="alert alert-info border-0" th:if="${param.logout}">Déconnecté.</div>
+
+    <form method="post" th:action="@{/login}">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" name="username" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-control" type="password" name="password" required />
+      </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe" />
+        <label class="form-check-label" for="rememberMe">Rester connecté</label>
+      </div>
+      <button class="btn btn-accent w-100" type="submit">Se connecter</button>
+    </form>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

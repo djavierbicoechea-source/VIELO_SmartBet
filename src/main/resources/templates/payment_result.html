@@ -1,0 +1,26 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('Paiement • VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-5" style="max-width:760px;">
+  <div class="auth-shell p-4 p-md-5 text-center">
+    <h3 class="fw-bold mb-3">Résultat du paiement</h3>
+    <div th:if="${ok}" class="alert alert-success border-0">
+      Paiement confirmé ✅ Ton compte est maintenant Premium.
+    </div>
+    <div th:if="${!ok}" class="alert alert-warning border-0">
+      Paiement non confirmé. Vérifie ta session Stripe puis réessaie.
+    </div>
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+      <a class="btn btn-accent" th:href="@{/predictions}">Pronostics</a>
+      <a class="btn btn-gold" th:href="@{/generator}">Générateur</a>
+      <a class="btn btn-outline-shell" th:href="@{/dashboard}">Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

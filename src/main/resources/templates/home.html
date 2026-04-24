@@ -1,0 +1,74 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-4 py-lg-5">
+  <section class="hero-panel mb-4 mb-lg-5">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-7">
+        <span class="pill-label mb-3 d-inline-flex">Plateforme de pronostics football</span>
+        <h1 class="display-5 fw-bold mb-3">Analyse les meilleurs matchs, découvre les paris gratuits et débloque le premium quand tu veux aller plus loin.</h1>
+        <p class="lead muted mb-4">VIELO SmartBet t'aide à repérer rapidement les opportunités du jour et du lendemain. Les visiteurs voient une sélection gratuite, tandis que les pronostics premium et les tickets avancés restent floutés jusqu'à l'abonnement.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-accent btn-lg" th:href="@{/predictions}">Voir les pronostics</a>
+          <a class="btn btn-outline-shell btn-lg" th:href="@{/pricing}">Voir les abonnements</a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="glass-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Aperçu aujourd'hui + demain</h5>
+            <span class="muted small">2 gratuits • 4 premium floutés</span>
+          </div>
+          <div th:if="${#lists.isEmpty(previewPreds)}">
+            <p class="muted mb-0">Aucun pronostic disponible pour le moment.</p>
+          </div>
+          <div class="vstack gap-3" th:if="${!#lists.isEmpty(previewPreds)}">
+            <div class="match-row" th:each="p : ${previewPreds}">
+              <div class="d-flex justify-content-between gap-3">
+                <div>
+                  <div class="fw-semibold" th:text="${p.matchLabel}"></div>
+                  <div class="muted small" th:text="${p.forDate + ' • ' + p.league}"></div>
+                  <div class="muted small" th:if="${p.free or premium}" th:text="${p.market + ' • ' + p.pick}"></div>
+                  <div class="muted small" th:if="${p.premium and !premium}">🔒 Contenu premium masqué</div>
+                </div>
+                <div class="text-end">
+                  <span class="badge" th:classappend="${p.free ? 'badge-free' : 'badge-premium'}" th:text="${p.tierLabel}"></span>
+                  <div class="fw-bold mt-1" th:if="${p.free or premium}" th:text="${p.odd}"></div>
+                  <div class="fw-bold mt-1" th:if="${p.premium and !premium}">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row g-3">
+    <div class="col-md-4">
+      <div class="feature-card h-100">
+        <h5>Pronostics</h5>
+        <p class="muted mb-0">Consulte les matchs d'aujourd'hui et de demain avec une séparation nette entre gratuit et premium.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card h-100">
+        <h5>Abonnements</h5>
+        <p class="muted mb-0">Choisis un plan mensuel ou annuel pour déverrouiller toutes les sélections, les cotes et les tickets complets.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card h-100">
+        <h5>Générateur</h5>
+        <p class="muted mb-0">Prépare tes paris selon ton budget, ton objectif et ton niveau de risque avec plus d'options en premium.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

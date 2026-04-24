@@ -1,0 +1,102 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('Générateur • VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="fw-bold mb-0">Générateur de mises</h2>
+    <a th:if="${!premium}" class="btn btn-gold btn-sm" th:href="@{/pricing}">Passer Premium</a>
+  </div>
+  <p class="muted mt-2">Crée des tickets à partir de ton budget. Sans abonnement, tu vois les tickets basés sur les pronostics gratuits. Avec Premium, tu vois aussi les tickets avancés.</p>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card generator-card p-3">
+        <form method="post" th:action="@{/generator}" th:object="${form}">
+          <div class="mb-3">
+            <label class="form-label">Budget</label>
+            <input class="form-control" type="number" step="0.01" th:field="*{budget}" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('budget')}" th:errors="*{budget}"></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Profit attendu</label>
+            <input class="form-control" type="number" step="0.01" th:field="*{targetProfit}" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('targetProfit')}" th:errors="*{targetProfit}"></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Risque</label>
+            <select class="form-select" th:field="*{risk}">
+              <option value="LOW">Faible</option>
+              <option value="MEDIUM">Moyen</option>
+              <option value="HIGH">Élevé</option>
+            </select>
+          </div>
+          <button class="btn btn-accent w-100" type="submit">Générer</button>
+        </form>
+
+        <div class="mt-3 muted small" th:if="${!premium}">
+          Version FREE : 1 ticket visible basé sur les pronostics gratuits, et les tickets premium restent verrouillés.
+        </div>
+        <div class="mt-2 muted small" th:if="${premium}">
+          Version PREMIUM : plusieurs tickets avec accès complet aux sélections gratuites et premium.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card generator-card p-3">
+        <h5 class="mb-3">Résultats</h5>
+        <div th:if="${recs == null}">
+          <p class="muted mb-0">Génère un ticket pour voir les recommandations.</p>
+        </div>
+
+        <div th:if="${recs != null}">
+          <div class="mb-3 result-ticket" th:each="r, it : ${recs}">
+            <div class="d-flex justify-content-between gap-3">
+              <div class="fw-semibold text-white">Ticket <span th:text="${it.index + 1}"></span></div>
+              <div class="text-end result-summary">
+                <div><span class="muted small">Cote:</span> <span class="result-value" th:text="${r.totalOdd}"></span></div>
+                <div><span class="muted small">Mise:</span> <span class="result-value" th:text="${r.stake}"></span></div>
+                <div><span class="muted small">Profit:</span> <span class="result-value" th:text="${r.potentialProfit}"></span></div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <ul class="ticket-lines mb-2">
+                <li th:each="l : ${r.lines}" th:text="${l.match + ' — ' + l.market + ' — ' + l.pick + ' (odds ' + l.odd + ')'}"></li>
+              </ul>
+              <div class="muted small" th:text="${r.note}"></div>
+            </div>
+            <hr class="border-light opacity-25"/>
+          </div>
+
+          <div th:if="${!premium and lockedRecs != null and !#lists.isEmpty(lockedRecs)}">
+            <h6 class="mt-4 mb-3">Tickets premium verrouillés</h6>
+            <div class="mb-3 result-ticket locked-ticket" th:each="r, it : ${lockedRecs}">
+              <div class="d-flex justify-content-between gap-3 align-items-start">
+                <div class="flex-grow-1 locked">
+                  <div class="fw-semibold text-white">Ticket Premium <span th:text="${it.index + 1}"></span></div>
+                  <ul class="ticket-lines mb-2 mt-3">
+                    <li th:each="l : ${r.lines}" th:text="${l.match + ' — ' + l.market + ' — ' + l.pick + ' (odds ' + l.odd + ')'}"></li>
+                  </ul>
+                </div>
+                <span class="badge badge-premium">PREMIUM</span>
+              </div>
+              <div class="premium-lock-panel mt-3">
+                <div class="fw-semibold">🔒 Ticket avancé masqué</div>
+                <div class="muted">Passe à Premium pour voir les tickets générés avec les pronostics premium.</div>
+                <a class="btn btn-gold btn-sm mt-3" th:href="@{/pricing}">Débloquer Premium</a>
+              </div>
+              <hr class="border-light opacity-25"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('Dashboard • VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-4 py-lg-5">
+  <div class="hero-panel mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+      <div>
+        <span class="pill-label mb-3 d-inline-flex">Espace membre</span>
+        <h2 class="fw-bold mb-2">Dashboard</h2>
+        <p class="muted mb-0">Connecté avec <strong th:text="${email}"></strong></p>
+      </div>
+      <div class="status-chip" th:classappend="${premium ? ' status-chip-premium' : ''}">
+        <span th:text="${premium ? 'Premium actif' : 'Compte standard'}"></span>
+        <small th:if="${premiumUntil != null}" th:text="${'jusqu’au ' + premiumUntil}"></small>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="alert alert-success border-0 shadow-sm" th:if="${paymentSuccess}" th:text="${paymentSuccess}"></div>
+  <div class="alert alert-danger border-0 shadow-sm" th:if="${paymentError}" th:text="${paymentError}"></div>
+
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="feature-card h-100">
+        <h5 class="mb-3">Pronostics</h5>
+        <p class="muted">Consulte rapidement les sélections du jour.</p>
+        <a class="btn btn-accent w-100" th:href="@{/predictions}">Ouvrir</a>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="feature-card h-100">
+        <h5 class="mb-3">Premium</h5>
+        <p class="muted" th:text="${premium ? 'Ton abonnement est actif.' : 'Passe à Premium pour débloquer tout le contenu.'}"></p>
+        <a class="btn btn-gold w-100" th:href="@{/pricing}">Voir l’offre</a>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="feature-card h-100">
+        <h5 class="mb-3">Générateur</h5>
+        <p class="muted">Crée des tickets à partir de ton budget et du niveau de risque.</p>
+        <a class="btn btn-outline-shell w-100" th:href="@{/generator}">Lancer</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

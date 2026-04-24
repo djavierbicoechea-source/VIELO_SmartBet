@@ -1,0 +1,270 @@
+:root {
+  --bg: #07111f;
+  --bg-soft: #0d1728;
+  --card: rgba(16, 25, 43, 0.88);
+  --card-strong: #101a2b;
+  --text: #ebf2ff;
+  --muted: #97a8cb;
+  --accent: #2dd4bf;
+  --accent-strong: #14b8a6;
+  --gold: #fbbf24;
+  --gold-soft: rgba(251, 191, 36, 0.16);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at top left, rgba(45, 212, 191, 0.15), transparent 28%),
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.12), transparent 24%),
+    linear-gradient(180deg, #07111f 0%, #091423 100%);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+a { color: var(--text); text-decoration: none; }
+a:hover { color: #fff; }
+
+.app-nav {
+  background: rgba(7, 17, 31, 0.72) !important;
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  color: #04121b;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.nav-link, .navbar-brand { color: var(--text) !important; }
+.nav-link { opacity: 0.88; }
+.nav-link:hover { opacity: 1; }
+.nav-user {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-panel,
+.auth-shell,
+.feature-card,
+.glass-card,
+.pricing-card,
+.status-card,
+.empty-state {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.hero-panel,
+.feature-card,
+.glass-card,
+.pricing-card,
+.status-card,
+.empty-state { padding: 1.5rem; }
+.auth-shell { border-radius: 28px; box-shadow: var(--shadow); }
+.pricing-card { display: flex; flex-direction: column; min-height: 100%; }
+.premium-highlight { outline: 1px solid rgba(251, 191, 36, 0.26); }
+.pricing-header { margin-bottom: 1rem; }
+
+.pill-label,
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .9rem;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.18);
+  color: #d7fffa;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.status-chip {
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.status-chip small { color: var(--muted); }
+.status-chip-premium {
+  background: var(--gold-soft);
+  border-color: rgba(251, 191, 36, 0.24);
+  color: #ffe7a4;
+}
+
+.match-row,
+.prediction-card {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.match-row {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.match-row:last-child { padding-bottom: 0; border-bottom: none; }
+
+.badge-free {
+  background: rgba(45, 212, 191, 0.14);
+  color: #7ef7ea;
+  border: 1px solid rgba(45, 212, 191, 0.28);
+}
+.badge-premium {
+  background: rgba(251, 191, 36, 0.14);
+  color: #ffd768;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+}
+
+.muted { color: var(--muted); }
+.locked { filter: blur(4px); opacity: .6; user-select:none; pointer-events:none; }
+.premium-lock-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.11);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.btn {
+  border-radius: 14px;
+  font-weight: 700;
+  border: none;
+  padding: .75rem 1rem;
+}
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #04120f;
+}
+.btn-accent:hover { color: #04120f; transform: translateY(-1px); }
+.btn-gold {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1b1200;
+}
+.btn-gold:hover { color: #1b1200; transform: translateY(-1px); }
+.btn-outline-shell,
+.btn-nav-ghost {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.btn-outline-shell:hover,
+.btn-nav-ghost:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+}
+.btn-nav-ghost {
+  padding: .5rem .9rem;
+  border-radius: 12px;
+}
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.form-control,
+.form-select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border-radius: 14px;
+  min-height: 48px;
+}
+.form-control:focus,
+.form-select:focus {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: rgba(45, 212, 191, 0.45);
+  box-shadow: 0 0 0 .2rem rgba(45, 212, 191, 0.12);
+}
+.form-check-input {
+  background-color: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.2);
+}
+.form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.alert {
+  border-radius: 18px;
+}
+.footer-shell {
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+@media (max-width: 991.98px) {
+  .nav-user { max-width: none; }
+  .hero-panel, .feature-card, .glass-card, .pricing-card, .status-card, .empty-state { padding: 1.15rem; }
+}
+
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.card label, .card li, .card p, .card div, .card span {
+  color: inherit;
+}
+
+.generator-card .form-label,
+.generator-card .fw-semibold,
+.result-ticket .text-white,
+.result-value {
+  color: var(--text) !important;
+}
+
+.ticket-lines {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text);
+}
+
+.ticket-lines li {
+  margin-bottom: .4rem;
+}
+
+.result-summary {
+  min-width: 120px;
+}
+
+.form-control::placeholder {
+  color: rgba(235, 242, 255, 0.55);
+}
+
+.form-select option {
+  color: #eef4ff;
+  background: #0f1a2c;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus,
+.form-select:-webkit-autofill {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,.04) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.generator-card .muted {
+  color: #b5c4e0;
+}

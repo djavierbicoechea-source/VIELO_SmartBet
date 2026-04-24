@@ -1,0 +1,30 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('Register • VIELO SmartBet')"></head>
+<body>
+<div th:replace="fragments :: nav"></div>
+
+<div class="container py-5" style="max-width:540px;">
+  <div class="auth-shell p-4 p-md-5">
+    <span class="pill-label mb-3 d-inline-flex">Créer un compte</span>
+    <h3 class="mb-3 fw-bold">Rejoins VIELO SmartBet</h3>
+    <div class="alert alert-danger border-0" th:if="${error}" th:text="${error}"></div>
+    <form method="post" th:action="@{/register}" th:object="${form}">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" th:field="*{email}" required />
+        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-control" type="password" th:field="*{password}" required />
+        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+      </div>
+      <button class="btn btn-accent w-100" type="submit">Créer le compte</button>
+    </form>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>
