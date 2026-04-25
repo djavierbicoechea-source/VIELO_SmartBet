@@ -5,10 +5,9 @@ import com.vielo.smartbet.user.AppUser;
 import com.vielo.smartbet.user.Role;
 import com.vielo.smartbet.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
@@ -17,16 +16,11 @@ import java.util.Set;
 public class DataInitializer {
 
     @Bean
-    @Order(999)
-    ApplicationRunner initUsers(UserRepository repo,
+    CommandLineRunner initUsers(UserRepository repo,
                                 PasswordEncoder encoder,
                                 PredictionService predictionService,
                                 @Value("${vielo.demo.enabled:false}") boolean demoEnabled) {
-
         return args -> {
-
-            Thread.sleep(5000);
-
             if (repo.findByEmail("admin@vielosmartbet.com").isEmpty()) {
                 AppUser admin = AppUser.builder()
                         .email("admin@vielosmartbet.com")
@@ -34,10 +28,8 @@ public class DataInitializer {
                         .enabled(true)
                         .roles(Set.of(Role.ADMIN, Role.USER))
                         .build();
-
                 repo.save(admin);
             }
-
             if (repo.findByEmail("user@vielosmartbet.com").isEmpty()) {
                 AppUser user = AppUser.builder()
                         .email("user@vielosmartbet.com")
@@ -45,10 +37,8 @@ public class DataInitializer {
                         .enabled(true)
                         .roles(Set.of(Role.USER))
                         .build();
-
                 repo.save(user);
             }
-
             if (demoEnabled) {
                 predictionService.createDemoPredictionsIfEmpty();
             }
