@@ -11,6 +11,7 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
+
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -26,3 +27,15 @@ services:
         fromDatabase:
           name: vielodb
           property: password
+
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      - key: APIFOOTBALL_ENABLED
+        value: false
+
+      - key: ODDS_API_ENABLED
+        value: false
+
+      - key: STRIPE_ENABLED
+        value: false
