@@ -18,6 +18,12 @@ services:
           name: vielodb
           property: connectionString
 
+- key: JDBC_DATABASE_URL
+  fromDatabase:
+    name: vielodb
+    property: connectionString
+
+
       - key: PGUSER
         fromDatabase:
           name: vielodb
