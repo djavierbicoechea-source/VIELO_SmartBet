@@ -16,7 +16,7 @@ import java.util.Set;
 @Configuration
 public class DataInitializer {
 
-    //@Bean
+    @Bean
     @Order(999)
     ApplicationRunner initUsers(UserRepository repo,
                                 PasswordEncoder encoder,
