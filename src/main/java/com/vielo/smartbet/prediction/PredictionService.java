@@ -151,17 +151,17 @@ public class PredictionService {
         log.info("Pronostics enregistrés pour {} : {}", date, sorted.size());
     }
 
-    // =========================
-    // DEMO MODE AMÉLIORÉ
-    // =========================
+    // ==================================================
+    // DEMO MODE COMPLET (EFFACE ANCIEN + NOUVEAU MATCHS)
+    // ==================================================
     public void createDemoPredictionsIfEmpty() {
 
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
 
-        if (!predRepo.findByForDateOrderByScoreDesc(today).isEmpty()) {
-            return;
-        }
+        // Effacer anciens records
+        predRepo.deleteByForDate(today);
+        predRepo.deleteByForDate(tomorrow);
 
         List<Prediction> demo = new ArrayList<>();
 
@@ -274,6 +274,8 @@ public class PredictionService {
                 .build());
 
         predRepo.saveAll(demo);
+
+        log.info("Demo predictions créées avec succès.");
     }
 
     private OddEntity bestPriced(List<OddEntity> odds) {
@@ -351,4 +353,4 @@ public class PredictionService {
     private double round4(double v) {
         return Math.round(v * 10000.0) / 10000.0;
     }
-            }
+                                                                               }
