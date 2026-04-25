@@ -9,20 +9,26 @@ services:
     name: vielo-smartbet
     runtime: docker
     plan: free
+
     dockerfilePath: ./Dockerfile
     dockerContext: .
 
     envVars:
-      - key: DATABASE_URL
+
+      - key: PGHOST
         fromDatabase:
           name: vielodb
-          property: connectionString
+          property: host
 
-- key: JDBC_DATABASE_URL
-  fromDatabase:
-    name: vielodb
-    property: connectionString
+      - key: PGPORT
+        fromDatabase:
+          name: vielodb
+          property: port
 
+      - key: PGDATABASE
+        fromDatabase:
+          name: vielodb
+          property: database
 
       - key: PGUSER
         fromDatabase:
