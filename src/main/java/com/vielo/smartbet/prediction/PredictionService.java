@@ -26,10 +26,10 @@ public class PredictionService {
     private final OddRepository oddRepo;
     private final PredictionRepository predRepo;
 
-    @Value("${vielo.free-tips-per-day:5}")
+    @Value("${vielo.free-tips-per-day:3}")
     private int freeTipsPerDay;
 
-    @Value("${vielo.max-predictions-per-day:10}")
+    @Value("${vielo.max-predictions-per-day:8}")
     private int maxPredictionsPerDay;
 
     public PredictionService(FixtureRepository fixtureRepo,
@@ -54,13 +54,11 @@ public class PredictionService {
                         .limit(Math.max(maxPredictionsPerDay * 3L, 24L))
                         .toList();
 
-        // Si aucun fixture => garder anciennes prédictions
         if (fixtures.isEmpty()) {
             log.warn("Aucun fixture exploitable pour {}", date);
             return;
         }
 
-        // Supprime seulement quand nouvelles données trouvées
         predRepo.deleteByForDate(date);
 
         List<Prediction> all = new ArrayList<>();
@@ -115,11 +113,7 @@ public class PredictionService {
                         .forDate(date)
                         .fixtureId(fixture.getId())
                         .league(fixture.getLeagueName())
-                        .matchLabel(
-                                fixture.getHomeTeam()
-                                        + " vs "
-                                        + fixture.getAwayTeam()
-                        )
+                        .matchLabel(fixture.getHomeTeam() + " vs " + fixture.getAwayTeam())
                         .market(prettyMarket(representative.getMarket()))
                         .pick(prettyOutcome(representative.getOutcome()))
                         .odd(round2(maxOdd))
@@ -157,56 +151,127 @@ public class PredictionService {
         log.info("Pronostics enregistrés pour {} : {}", date, sorted.size());
     }
 
-    // Compatibilité DataInitializer
+    // =========================
+    // DEMO MODE AMÉLIORÉ
+    // =========================
     public void createDemoPredictionsIfEmpty() {
 
         LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
 
         if (!predRepo.findByForDateOrderByScoreDesc(today).isEmpty()) {
             return;
         }
 
-        List<Prediction> demo = List.of(
+        List<Prediction> demo = new ArrayList<>();
 
-                Prediction.builder()
-                        .forDate(today)
-                        .fixtureId(1001L)
-                        .league("Demo League")
-                        .matchLabel("Arsenal vs Chelsea")
-                        .market("Match Winner")
-                        .pick("Arsenal")
-                        .odd(1.72)
-                        .impliedProb(0.58)
-                        .score(0.76)
-                        .tier(PredictionTier.FREE)
-                        .build(),
+        // ===== TODAY =====
 
-                Prediction.builder()
-                        .forDate(today)
-                        .fixtureId(1002L)
-                        .league("Demo League")
-                        .matchLabel("Real Madrid vs Sevilla")
-                        .market("Goals Over/Under")
-                        .pick("Over 2.5")
-                        .odd(1.80)
-                        .impliedProb(0.55)
-                        .score(0.74)
-                        .tier(PredictionTier.FREE)
-                        .build(),
+        demo.add(Prediction.builder()
+                .forDate(today)
+                .fixtureId(2001L)
+                .league("Ligue 1")
+                .matchLabel("Toulouse vs AS Monaco")
+                .market("Match Winner")
+                .pick("AS Monaco")
+                .odd(1.78)
+                .impliedProb(0.56)
+                .score(0.84)
+                .tier(PredictionTier.FREE)
+                .build());
 
-                Prediction.builder()
-                        .forDate(today)
-                        .fixtureId(1003L)
-                        .league("Demo League")
-                        .matchLabel("PSG vs Marseille")
-                        .market("Both Teams To Score")
-                        .pick("Yes")
-                        .odd(1.67)
-                        .impliedProb(0.60)
-                        .score(0.73)
-                        .tier(PredictionTier.FREE)
-                        .build()
-        );
+        demo.add(Prediction.builder()
+                .forDate(today)
+                .fixtureId(2002L)
+                .league("Serie A")
+                .matchLabel("Verona vs Lecce")
+                .market("Goals Over/Under")
+                .pick("Under 2.5")
+                .odd(1.62)
+                .impliedProb(0.61)
+                .score(0.82)
+                .tier(PredictionTier.FREE)
+                .build());
+
+        // ===== TOMORROW =====
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3001L)
+                .league("Serie A")
+                .matchLabel("Torino vs Inter")
+                .market("Match Winner")
+                .pick("Inter")
+                .odd(1.71)
+                .impliedProb(0.58)
+                .score(0.80)
+                .tier(PredictionTier.FREE)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3002L)
+                .league("Serie A")
+                .matchLabel("Milan vs Juventus")
+                .market("Both Teams To Score")
+                .pick("Yes")
+                .odd(1.95)
+                .impliedProb(0.51)
+                .score(0.79)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3003L)
+                .league("La Liga")
+                .matchLabel("Villarreal vs Celta Vigo")
+                .market("Goals Over/Under")
+                .pick("Over 2.5")
+                .odd(1.83)
+                .impliedProb(0.54)
+                .score(0.78)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3004L)
+                .league("La Liga")
+                .matchLabel("Rayo Vallecano vs Real Sociedad")
+                .market("Double Chance")
+                .pick("X2")
+                .odd(1.57)
+                .impliedProb(0.63)
+                .score(0.77)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3005L)
+                .league("La Liga")
+                .matchLabel("Osasuna vs Sevilla")
+                .market("Goals Over/Under")
+                .pick("Under 3.5")
+                .odd(1.44)
+                .impliedProb(0.69)
+                .score(0.76)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3006L)
+                .league("Serie A")
+                .matchLabel("Fiorentina vs Sassuolo")
+                .market("Match Winner")
+                .pick("Fiorentina")
+                .odd(1.74)
+                .impliedProb(0.57)
+                .score(0.75)
+                .tier(PredictionTier.PREMIUM)
+                .build());
 
         predRepo.saveAll(demo);
     }
@@ -286,4 +351,4 @@ public class PredictionService {
     private double round4(double v) {
         return Math.round(v * 10000.0) / 10000.0;
     }
-}
+            }
