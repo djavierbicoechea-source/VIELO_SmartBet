@@ -1,52 +1,28 @@
-services:
-  - type: pserv
-    name: vielo-smartbet-db
-    runtime: docker
-    repo: https://github.com/render-examples/mysql.git
-    branch: master
-    plan: starter
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 10
-    envVars:
-      - key: MYSQL_DATABASE
-        value: vielodb
-      - key: MYSQL_USER
-        value: vielouser
-      - key: MYSQL_PASSWORD
-        generateValue: true
-      - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
+databases:
+  - name: vielodb
+    plan: free
+    databaseName: vielodb
+    user: vielouser
 
+services:
   - type: web
     name: vielo-smartbet
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    healthCheckPath: /
     envVars:
-      - key: DB_URL
-        value: jdbc:mysql://vielo-smartbet-db:3306/vielodb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - key: DB_USERNAME
-        value: vielouser
-      - key: DB_PASSWORD
-        fromService:
-          type: pserv
-          name: vielo-smartbet-db
-          envVarKey: MYSQL_PASSWORD
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vielodb
+          property: connectionString
 
-      - key: APIFOOTBALL_ENABLED
-        value: false
-      - key: ODDS_API_ENABLED
-        value: false
-      - key: STRIPE_ENABLED
-        value: false
+      - key: PGUSER
+        fromDatabase:
+          name: vielodb
+          property: user
 
-      - key: VIELO_DEMO_ENABLED
-        value: true
-      - key: VIELO_FREE_TIPS_PER_DAY
-        value: 5
-      - key: VIELO_MAX_PREDICTIONS_PER_DAY
-        value: 10
+      - key: PGPASSWORD
+        fromDatabase:
+          name: vielodb
+          property: password
