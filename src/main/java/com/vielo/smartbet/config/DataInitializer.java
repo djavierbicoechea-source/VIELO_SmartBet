@@ -19,8 +19,10 @@ public class DataInitializer {
     CommandLineRunner initUsers(UserRepository repo,
                                 PasswordEncoder encoder,
                                 PredictionService predictionService,
-                                @Value("${vielo.demo.enabled:false}") boolean demoEnabled) {
+                                @Value("${vielo.demo.enabled:true}") boolean demoEnabled) {
+
         return args -> {
+
             if (repo.findByEmail("admin@vielosmartbet.com").isEmpty()) {
                 AppUser admin = AppUser.builder()
                         .email("admin@vielosmartbet.com")
@@ -30,6 +32,7 @@ public class DataInitializer {
                         .build();
                 repo.save(admin);
             }
+
             if (repo.findByEmail("user@vielosmartbet.com").isEmpty()) {
                 AppUser user = AppUser.builder()
                         .email("user@vielosmartbet.com")
@@ -39,9 +42,11 @@ public class DataInitializer {
                         .build();
                 repo.save(user);
             }
+
             if (demoEnabled) {
                 predictionService.createDemoPredictionsIfEmpty();
+                System.out.println("NEW DEMO MATCHES LOADED");
             }
         };
     }
-}
+                    }
