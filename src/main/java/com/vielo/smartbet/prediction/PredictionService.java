@@ -129,20 +129,231 @@ public class PredictionService {
                     .sorted(Comparator.comparing(Prediction::getScore).reversed())
                     .filter(candidate -> isDiverseCandidate(candidate, all))
                     .limit(2)
+                    .forEach(all::add);
+        }
+
+        List<Prediction> sorted =
+                all.stream()
+                        .sorted(Comparator.comparing(Prediction::getScore).reversed())
+                        .limit(maxPredictionsPerDay)
+                        .collect(Collectors.toList());
+
+        for (int i = 0; i < sorted.size(); i++) {
+            sorted.get(i).setTier(
+                    i < freeTipsPerDay
+                            ? PredictionTier.FREE
+                            : PredictionTier.PREMIUM
+            );
+        }
+
+        predRepo.saveAll(sorted);
+
+        log.info("Pronostics enregistrés pour {} : {}", date, sorted.size());
+    }
+
+    // ==================================================
+    // DEMO MODE COMPLET (EFFACE ANCIEN + NOUVEAU MATCHS)
+    // ==================================================
     public void createDemoPredictionsIfEmpty() {
 
-    LocalDate today = LocalDate.now();
-    LocalDate tomorrow = today.plusDays(1);
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
 
-    predRepo.deleteByForDate(today);
-    predRepo.deleteByForDate(tomorrow);
+        // Effacer anciens records
+        predRepo.deleteByForDate(today);
+        predRepo.deleteByForDate(tomorrow);
 
-    List<Prediction> demo = new ArrayList<>();
+        List<Prediction> demo = new ArrayList<>();
 
-    // ================= TODAY =================
+        // ===== TODAY =====
 
-    demo.add(Prediction.builder()
-            .forDate(today)
+        demo.add(Prediction.builder()
+                .forDate(today)
+                .fixtureId(2001L)
+                .league("Ligue 1")
+                .matchLabel("Toulouse vs AS Monaco")
+                .market("Match Winner")
+                .pick("AS Monaco")
+                .odd(1.78)
+                .impliedProb(0.56)
+                .score(0.84)
+                .tier(PredictionTier.FREE)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(today)
+                .fixtureId(2002L)
+                .league("Serie A")
+                .matchLabel("Verona vs Lecce")
+                .market("Goals Over/Under")
+                .pick("Under 2.5")
+                .odd(1.62)
+                .impliedProb(0.61)
+                .score(0.82)
+                .tier(PredictionTier.FREE)
+                .build());
+
+        // ===== TOMORROW =====
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3001L)
+                .league("Serie A")
+                .matchLabel("Torino vs Inter")
+                .market("Match Winner")
+                .pick("Inter")
+                .odd(1.71)
+                .impliedProb(0.58)
+                .score(0.80)
+                .tier(PredictionTier.FREE)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3002L)
+                .league("Serie A")
+                .matchLabel("Milan vs Juventus")
+                .market("Both Teams To Score")
+                .pick("Yes")
+                .odd(1.95)
+                .impliedProb(0.51)
+                .score(0.79)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3003L)
+                .league("La Liga")
+                .matchLabel("Villarreal vs Celta Vigo")
+                .market("Goals Over/Under")
+                .pick("Over 2.5")
+                .odd(1.83)
+                .impliedProb(0.54)
+                .score(0.78)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3004L)
+                .league("La Liga")
+                .matchLabel("Rayo Vallecano vs Real Sociedad")
+                .market("Double Chance")
+                .pick("X2")
+                .odd(1.57)
+                .impliedProb(0.63)
+                .score(0.77)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3005L)
+                .league("La Liga")
+                .matchLabel("Osasuna vs Sevilla")
+                .market("Goals Over/Under")
+                .pick("Under 3.5")
+                .odd(1.44)
+                .impliedProb(0.69)
+                .score(0.76)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        demo.add(Prediction.builder()
+                .forDate(tomorrow)
+                .fixtureId(3006L)
+                .league("Serie A")
+                .matchLabel("Fiorentina vs Sassuolo")
+                .market("Match Winner")
+                .pick("Fiorentina")
+                .odd(1.74)
+                .impliedProb(0.57)
+                .score(0.75)
+                .tier(PredictionTier.PREMIUM)
+                .build());
+
+        predRepo.saveAll(demo);
+
+        log.info("Demo predictions créées avec succès.");
+    }
+
+    private OddEntity bestPriced(List<OddEntity> odds) {
+        return odds.stream()
+                .max(Comparator.comparing(OddEntity::getOdd))
+                .orElse(odds.get(0));
+    }
+
+    private double marketWeight(String market) {
+        String m = normalizeMarket(market);
+
+        if (m.contains("match winner")) return 0.82;
+        if (m.contains("both teams")) return 0.74;
+        if (m.contains("goals over/under")) return 0.72;
+
+        return 0.60;
+    }
+
+    private String prettyMarket(String market) {
+        String m = normalizeMarket(market);
+
+        if (m.contains("both teams")) return "Both Teams To Score";
+        if (m.contains("goals over/under")) return "Goals Over/Under";
+        if (m.contains("match winner")) return "Match Winner";
+
+        return market;
+    }
+
+    private String prettyOutcome(String outcome) {
+        if (outcome == null) return "";
+
+        String o = outcome.trim();
+
+        if (o.equalsIgnoreCase("home")) return "Home";
+        if (o.equalsIgnoreCase("away")) return "Away";
+
+        return o;
+    }
+
+    private boolean isDiverseCandidate(Prediction candidate,
+                                       List<Prediction> existing) {
+
+        return existing.stream().noneMatch(p ->
+                Objects.equals(p.getFixtureId(), candidate.getFixtureId())
+                        && normalizeMarket(p.getMarket())
+                        .equals(normalizeMarket(candidate.getMarket()))
+                        && normalizeOutcome(p.getPick())
+                        .equals(normalizeOutcome(candidate.getPick()))
+        );
+    }
+
+    private boolean isSupportedMarket(String market) {
+
+        if (market == null) return false;
+
+        String m = normalizeMarket(market);
+
+        return m.contains("match winner")
+                || m.contains("goals over/under")
+                || m.contains("both teams");
+    }
+
+    private String normalizeMarket(String market) {
+        return market == null ? "" : market.trim().toLowerCase();
+    }
+
+    private String normalizeOutcome(String outcome) {
+        return outcome == null ? "" : outcome.trim().toLowerCase();
+    }
+
+    private double round2(double v) {
+        return Math.round(v * 100.0) / 100.0;
+    }
+
+    private double round4(double v) {
+        return Math.round(v * 10000.0) / 10000.0;
+    }
+                                                                               }
             .fixtureId(5001L)
             .league("La Liga")
             .matchLabel("Espanyol vs Levante")
